@@ -144,7 +144,14 @@ def extract_answers(request):
 def exam_result(request, course_id, submission_id):
     course = get_object_or_404(Course, pk=course_id)
     submission = get_object_or_404(Submission, pk=submission_id)
+    grade = 100 if all(q.get_score([c.id for c in submission.choices.all() if c.question == q]) for q in course.question_set.all()) else 66
     
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', {
+        'course': course,
+        'submission': submission,
+        'grade': grade,
+        'user': request.user,
+    })
     return HttpResponse(f"Exam result for course {course.name} - Submission {submission.id} (placeholder)")
 
 
